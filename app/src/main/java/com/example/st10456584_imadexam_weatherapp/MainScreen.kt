@@ -14,10 +14,10 @@ class MainScreen : AppCompatActivity() {
     private lateinit var maxNumberEditText: EditText
     private lateinit var weatherNumberEditText: EditText
 
-    private val day = arrayOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
-    private val minTemperatures = DoubleArray(7)
-    private val maxTemperatures = DoubleArray(7)
-    private val weatherConditions = arrayOfNulls<String>(7)
+    private val dayOfWeek = arrayOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    private val minTemperatures = IntArray(7)
+    private val maxTemperatures = IntArray(7)
+    private val weatherConditions = Array<String?>(7) { null }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,12 @@ class MainScreen : AppCompatActivity() {
         // Set onClickListeners
         viewButton.setOnClickListener {
             // Start activity to view daily weather
-            startActivity(Intent(this, ViewScreen::class.java))
+            val intent = Intent(this, ViewScreen::class.java)
+            intent.putExtra("dayOfWeek", dayOfWeek)
+            intent.putExtra("minTemperatures", minTemperatures)
+            intent.putExtra("maxTemperatures", maxTemperatures)
+            intent.putExtra("weatherConditions", weatherConditions)
+            startActivity(intent)
         }
 
         clearButton.setOnClickListener {
@@ -65,33 +70,42 @@ class MainScreen : AppCompatActivity() {
     }
 
     private fun calculateAndDisplayAverage() {
-        var sum = 0.0
-        var count = 0
+        val minText = minNumberEditText.text.toString()
+        val maxText = maxNumberEditText.text.toString()
+
+        if (minText.isEmpty() || maxText.isEmpty()) {
+            Toast.makeText(this, "Please enter both min and max temperatures", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val minTemp = minText.toIntOrNull()
+        val maxTemp = maxText.toIntOrNull()
+
+        if (minTemp == null || maxTemp == null) {
+            Toast.makeText(this, "Please enter valid temperature values", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (minTemp !in -5..135 || maxTemp !in -5..135) {
+            Toast.makeText(this, "Temperature values must be between -5 and 135 degrees", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         for (i in 0 until 7) {
-            val minTemp = minTemperatures[i]
-            val maxTemp = maxTemperatures[i]
-
-            if (minTemp != 0.0 && maxTemp != 0.0) {
-                sum += (minTemp + maxTemp) / 2
-                count++
-            }
+            minTemperatures[i] = minTemp
+            maxTemperatures[i] = maxTemp
         }
 
-        if (count > 0) {
-            val average = sum / count
-            Toast.makeText(this, "Average temperature for the week: $average", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "No data available to calculate average", Toast.LENGTH_SHORT).show()
-        }
+        val average = (minTemp + maxTemp) / 2
+        Toast.makeText(this, "Average temperature for the week: $average", Toast.LENGTH_SHORT).show()
 
-        // Print weather conditions for each day
-        for (i in 0 until 7) {
-            val dayOfWeek = day[i]
-            val weatherCondition = weatherConditions[i]
-            if (weatherCondition != null) {
-                println("$dayOfWeek: $weatherCondition")
-            }
-        }
+        // Pass the calculated averages to ViewScreen
+        val intent = Intent(this, ViewScreen::class.java)
+        intent.putExtra("dayOfWeek", dayOfWeek)
+        intent.putExtra("minTemperatures", minTemperatures)
+        intent.putExtra("maxTemperatures", maxTemperatures)
+        intent.putExtra("weatherConditions", weatherConditions)
+        intent.putExtra("averageTemperature", average)
+        startActivity(intent)
     }
 }
