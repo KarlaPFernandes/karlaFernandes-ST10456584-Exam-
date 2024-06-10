@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">ST10456584- IMAD Exam- Weather App</string>
+    <string name="textView">TempTRACK</string>
+    <string name="mainButton">Main Screen</string>
+    <string name="exitButton">Exit</string>
+    <string name="viewButton">View</string>
+    <string name="clearButton">Clear</string>
+    <string name="nameView">Karla Fernandes</string>
+    <string name="studentView">ST10456584</string>
+    <string name="maxTextView">Maximum Temperatures </string>
+    <string name="minTextView">Minimum Temperatures</string>
+    <string name="weatherTextView">Weather Condition </string>
+    <string name="dayTextView">Week Day </string>
+    <string name="averageButton">Average </string>
+    <string name="minNumber"></string>
+    <string name="maxNumber"></string>
+    <string name="weatherText">Enter The Weather</string>
+    <string name="dayText">Enter the Week Day</string>
+</resources>
